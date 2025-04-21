@@ -1,10 +1,12 @@
 package org.jsp.servlet;
 
+import accounts.UserProfile;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 //import javax.servlet.ServletConfig;
 //import javax.servlet.ServletException;
 //import javax.servlet.http.HttpServlet;
@@ -15,6 +17,8 @@ import java.io.IOException;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 
 
@@ -31,16 +35,29 @@ public class MainServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        UserProfile user = (UserProfile) session.getAttribute("user");
+        if (user == null) {response.sendRedirect("loginPage.html");}
+        String rootDirectory = "C:/CSUjava/" + user.getLogin();
         response.setContentType("text/html");
 
-        String path = request.getParameter("path");
-//
+        String path =Paths.get(request.getParameter("path")).normalize().toString();
+        File directory = new File(path);
+
+
+        if(!directory.exists()){
+            directory.mkdirs();
+        }
+
+        if (!path.startsWith(rootDirectory)){
+          path = rootDirectory;
+        }
         PrintWriter out = response.getWriter();
         out.println("<html><head><title>3.2</title></head><body>");
 
-        File directory;
+//        File directory;
         if (path == null || path.isEmpty()) {
-            directory = new File(System.getProperty("user.dir"));
+            directory = new File(rootDirectory);
         } else {
             directory = new File(path);
         }
@@ -51,7 +68,7 @@ public class MainServlet extends HttpServlet {
         }
 
         out.println("<i>" + path + " | " + new Date() + "</i>");
-        if (directory.getParentFile() != null){
+        if (!directory.getPath().equals(rootDirectory)){
             out.println("<br> <a href='/servletjsp/servlet?path=" + directory.getParentFile().getAbsolutePath() + "'>" + "<==" + "</a>");
         }
         out.println("<ul>");
@@ -69,7 +86,7 @@ public class MainServlet extends HttpServlet {
             out.println("<li>Папка пуста.</li>");
         }
 
-        out.println("</ul>");
+        out.println("</ul> <form action='session' method='POST'> <button type='submit' name='todo' value='logout'>Logout</button> </form>"); // <input type='hidden' name='todo' value='logout'/>
         out.println("</body></html>");
     }
 

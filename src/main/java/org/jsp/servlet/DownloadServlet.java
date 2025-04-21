@@ -1,12 +1,15 @@
 package org.jsp.servlet;
 
+import accounts.UserProfile;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.*;
+import java.nio.file.Paths;
 import java.util.Date;
 
 
@@ -23,7 +26,14 @@ public class DownloadServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String path = request.getParameter("file");
+        HttpSession session = request.getSession();
+        UserProfile user = (UserProfile) session.getAttribute("user");
+        if (user == null) {response.sendRedirect("loginPage.html");}
+        String path = Paths.get(request.getParameter("path")).normalize().toString();
+        String rootDirectory = "C:/CSUjava/" + user.getLogin();
+        if (!path.contains(rootDirectory)){
+            path = rootDirectory;
+        }
 
         File file = new File(path);
 

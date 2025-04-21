@@ -11,6 +11,7 @@
         <servlet-name>main-servlet</servlet-name>
         <url-pattern>/servlet</url-pattern>
     </servlet-mapping>
+
     <servlet>
         <servlet-name>download-servlet</servlet-name>
         <servlet-class>org.jsp.servlet.DownloadServlet</servlet-class>
@@ -18,5 +19,14 @@
     <servlet-mapping>
         <servlet-name>download-servlet</servlet-name>
         <url-pattern>/download</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>session-servlet</servlet-name>
+        <servlet-class>org.jsp.servlet.SessionServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>session-servlet</servlet-name>
+        <url-pattern>/session</url-pattern>
     </servlet-mapping>
 </web-app>
