@@ -38,11 +38,12 @@ public class SessionServlet extends HttpServlet {
                 UserProfile newUser = new UserProfile(login, password, email);
                 session.setAttribute("user", newUser);
                 boolean success = false; // Если все пройдет нормально, то превратится в тру
-                try {
+                // !!! Раскомментить трай-кэч для JDBC !!!
+//                try {
                     success = accountService.addNewUser(newUser);
-                } catch (SQLException | ClassNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
+//                } catch (SQLException | ClassNotFoundException e) {
+//                    throw new RuntimeException(e);
+//                }
                 if (success) {
                     userHome += login;
                     response.sendRedirect("servlet?path=" + userHome);
@@ -50,15 +51,16 @@ public class SessionServlet extends HttpServlet {
                 break;
             case "signin":
                 UserProfile user = new UserProfile(login, password);
-                try {
-                    if(accountService.isUserRegistered(user)){
+                // !!! Раскомментить трай-кэч для JDBC !!!
+//                try {
+                    if(accountService.isUserRegistered(user, true)){
                         userHome += login;
                         session.setAttribute("user", user);
                         response.sendRedirect("servlet?path=" + userHome);
                     } else { response.sendRedirect("loginPage.html");}
-                } catch (SQLException | ClassNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
+//                } catch (SQLException | ClassNotFoundException e) {
+//                    throw new RuntimeException(e);
+//                }
                 break;
             case "logout":
                 session.removeAttribute("user");
